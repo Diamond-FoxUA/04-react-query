@@ -22,7 +22,7 @@ function SearchBar({ onSubmit }: SearchBarProps) {
           className={css.link}
           href="https://www.themoviedb.org/"
           target="_blank"
-          rel="noopener nooferrer"
+          rel="noopener noreferrer"
         >
           Powered by TMDB
         </a>
