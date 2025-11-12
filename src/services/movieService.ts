@@ -3,6 +3,7 @@ import type { Movie } from "../types/movie"
 
 interface MoviesHttpResponce {
   results: Movie[];
+  total_page: number;
 }
 
 export const fetchMovies = async (query: string): Promise<Movie[]> => {
