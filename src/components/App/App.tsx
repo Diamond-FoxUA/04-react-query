@@ -1,7 +1,6 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import toast, { Toaster } from 'react-hot-toast';
-import type { Movie } from '../../types/movie';
-import { fetchMovies } from '../../services/movieService';
 
 import SearchBar from '../SearchBar/SearchBar';
 import MovieGrid from '../MovieGrid/MovieGrid';
@@ -9,12 +8,14 @@ import MovieModal from '../MovieModal/MovieModal';
 import Loader from '../Loader/Loader';
 import ErrorMessage from '../ErrorMessage/ErrorMessage';
 
+import type { Movie } from '../../types/movie';
+import { fetchMovies } from '../../services/movieService';
+
+
 function App() {
-  const [movies, setMovies] = useState<Movie[]>([]);
-  const [selectedMovie, setSelectedMovie] = useState<Movie | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
-  const [isError, setIsError] = useState(false);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [ query,setQuery ] = useState(''); 
+  const [ selectedMovie, setSelectedMovie ] = useState<Movie | null>(null);
+  const [ isModalOpen, setIsModalOpen ] = useState(false);
 
   const openModal = (movie: Movie) => {
     setSelectedMovie(movie);
@@ -25,23 +26,23 @@ function App() {
     setIsModalOpen(false);
   };
 
-  const handleSearch = async (query: string) => {
-    setMovies([]);
-    setIsError(false);
-    setIsLoading(true);
-    try {
-      const data = await fetchMovies(query);
-      setMovies(data);
+  const { data, isLoading, isError } = useQuery({
+    queryKey: ['movies', query],
+    queryFn: () => fetchMovies(query),
+    enabled: !!query,
+  });
 
-      if (data.length === 0) {
-        toast.error('No movies found for your request.');
-      }
-    } catch {
-      setIsError(true);
-    } finally {
-      setIsLoading(false);
-    }
+  const handleSearch = async (newQuery: string) => {
+    setQuery(newQuery);
   };
+
+  useEffect(() => {
+    if (!isLoading && query && data && data.results.length === 0) {
+      toast.error("No movies found for your request");
+    }
+  }, [isLoading, data, query]);
+
+  const movies = data?.results ?? [];
 
   return (
     <>
