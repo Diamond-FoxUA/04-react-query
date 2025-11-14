@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useQuery } from '@tanstack/react-query';
+import { keepPreviousData, useQuery } from '@tanstack/react-query';
 import toast, { Toaster } from 'react-hot-toast';
 
 import SearchBar from '../SearchBar/SearchBar';
@@ -32,6 +32,7 @@ function App() {
     queryKey: ['movies', query, page],
     queryFn: () => fetchMovies(query, page),
     enabled: !!query,
+    placeholderData: keepPreviousData,
   });
 
   const handleSearch = async (newQuery: string) => {
