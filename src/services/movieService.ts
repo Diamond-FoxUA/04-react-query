@@ -6,13 +6,13 @@ interface MoviesHttpResponce {
   total_pages: number;
 }
 
-export const fetchMovies = async (query: string): Promise<MoviesHttpResponce> => {
+export const fetchMovies = async (query: string, page: number): Promise<MoviesHttpResponce> => {
   const response = await axios.get<MoviesHttpResponce>(
     `https://api.themoviedb.org/3/search/movie`,
     {
       params: {
         query,
-        page: 1,
+        page,
         include_adult: false,
         language: 'en-US',
       },
